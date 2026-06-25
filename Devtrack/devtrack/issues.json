@@ -1,0 +1,8 @@
+{
+    "id": 1,
+    "title": "Login button not working",
+    "description": "Users on iOS cannot login",
+    "status": "open",
+    "priority": "critical",
+    "reporter_id": 1
+}
