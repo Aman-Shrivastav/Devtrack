@@ -14,6 +14,15 @@ class LoginSerializer(serializers.Serializer):
     password = serializers.CharField(write_only=True)
 
 
+class KBQuerySerializer(serializers.Serializer):
+    search = serializers.CharField(max_length=255, trim_whitespace=True)
+
+    def validate_search(self, value):
+        if not value:
+            raise serializers.ValidationError("This field may not be blank.")
+        return value
+
+
 class KBEntrySerializer(serializers.ModelSerializer):
     class Meta:
         model = KBEntry

@@ -1,0 +1,33 @@
+{
+  "info": {
+    "name": "TeamBoard API",
+    "description": "Coverage for TeamBoard registration, authentication, KB query, and administrator usage reporting.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://127.0.0.1:8000" },
+    { "key": "accessToken", "value": "" },
+    { "key": "adminAccessToken", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Register company — 201",
+      "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"username\": \"acmecorp\",\n  \"password\": \"securepass123\",\n  \"company_name\": \"Acme Corp\",\n  \"email\": \"dev@acme.test\"\n}" }, "url": "{{baseUrl}}/api/auth/register/" },
+      "event": [{ "listen": "test", "script": { "exec": ["pm.test('status is 201', () => pm.response.to.have.status(201));", "pm.collectionVariables.set('accessToken', pm.response.json().access);"] } }]
+    },
+    { "name": "Register duplicate username — 400", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"username\":\"acmecorp\",\"password\":\"securepass123\",\"company_name\":\"Duplicate\",\"email\":\"duplicate@acme.test\"}" }, "url": "{{baseUrl}}/api/auth/register/" } },
+    {
+      "name": "Login — 200",
+      "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"username\":\"acmecorp\",\"password\":\"securepass123\"}" }, "url": "{{baseUrl}}/api/auth/login/" },
+      "event": [{ "listen": "test", "script": { "exec": ["pm.test('status is 200', () => pm.response.to.have.status(200));", "pm.collectionVariables.set('accessToken', pm.response.json().access);"] } }]
+    },
+    { "name": "Login invalid credentials — 401", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"username\":\"acmecorp\",\"password\":\"wrong\"}" }, "url": "{{baseUrl}}/api/auth/login/" } },
+    { "name": "Query without token — 401", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"search\":\"select_related\"}" }, "url": "{{baseUrl}}/api/kb/query/" } },
+    { "name": "Query matching KB entries — 200", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"search\":\"select_related\"}" }, "url": "{{baseUrl}}/api/kb/query/" } },
+    { "name": "Query zero results — 200 and logged", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"search\":\"no-result-term\"}" }, "url": "{{baseUrl}}/api/kb/query/" } },
+    { "name": "Query blank search — 400", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"search\":\"\"}" }, "url": "{{baseUrl}}/api/kb/query/" } },
+    { "name": "Usage summary without token — 401", "request": { "method": "GET", "url": "{{baseUrl}}/api/admin/usage-summary/" } },
+    { "name": "Usage summary as client — 403", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "{{baseUrl}}/api/admin/usage-summary/" } },
+    { "name": "Usage summary as admin — 200", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{adminAccessToken}}" }], "url": "{{baseUrl}}/api/admin/usage-summary/" } }
+  ]
+}
