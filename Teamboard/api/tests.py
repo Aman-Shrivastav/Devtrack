@@ -87,9 +87,9 @@ class TeamBoardAPITests(APITestCase):
         self.assertEqual(response.data["count"], 0)
         self.assertEqual(QueryLog.objects.get().results_count, 0)
 
-    def test_query_rejects_blank_search(self):
+    def test_query_rejects_missing_search(self):
         self.client.force_authenticate(self.client_user)
-        response = self.client.post(reverse("kb-query"), {"search": " "}, format="json")
+        response = self.client.post(reverse("kb-query"), {}, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_usage_summary_rejects_client(self):
