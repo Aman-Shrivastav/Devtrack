@@ -1,0 +1,19 @@
+{
+  "info": {"name": "PulseNotify", "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"},
+  "variable": [{"key": "baseUrl", "value": "http://localhost:8000/api"}, {"key": "accessToken", "value": ""}],
+  "item": [
+    {"name": "Register", "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\"username\":\"alice\",\"password\":\"securepass\",\"email\":\"alice@example.com\"}"}, "url": "{{baseUrl}}/auth/register/"}},
+    {"name": "Register duplicate (400)", "request": {"method": "POST", "url": "{{baseUrl}}/auth/register/"}},
+    {"name": "Login", "request": {"method": "POST", "url": "{{baseUrl}}/auth/login/"}},
+    {"name": "Login invalid (401)", "request": {"method": "POST", "url": "{{baseUrl}}/auth/login/"}},
+    {"name": "Create alert", "request": {"method": "POST", "url": "{{baseUrl}}/alerts/"}},
+    {"name": "List alerts", "request": {"method": "GET", "url": "{{baseUrl}}/alerts/"}},
+    {"name": "Deactivate alert", "request": {"method": "DELETE", "url": "{{baseUrl}}/alerts/1/"}},
+    {"name": "Deactivate foreign alert (404)", "request": {"method": "DELETE", "url": "{{baseUrl}}/alerts/999/"}},
+    {"name": "Price for DEL-BOM", "request": {"method": "GET", "url": "{{baseUrl}}/flights/price/?route=DEL-BOM"}},
+    {"name": "Unknown price route (404)", "request": {"method": "GET", "url": "{{baseUrl}}/flights/price/?route=NOPE"}},
+    {"name": "Summary as user (403)", "request": {"method": "GET", "url": "{{baseUrl}}/admin/summary/"}},
+    {"name": "Summary as admin", "request": {"method": "GET", "url": "{{baseUrl}}/admin/summary/"}},
+    {"name": "List alerts without token (401)", "request": {"method": "GET", "url": "{{baseUrl}}/alerts/"}}
+  ]
+}
