@@ -1,5 +1,6 @@
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django.db import transaction, IntegrityError
 from django.db.models import Count, Q
@@ -24,6 +25,65 @@ class WorkspaceViewSet(viewsets.ModelViewSet):
                 user=self.request.user,
                 role=WorkspaceMember.RoleChoices.ADMIN
             )
+
+    @action(
+        detail=False,
+        methods=['post'],
+        url_path='atomic-create',
+        permission_classes=[IsAuthenticated],
+    )
+    def atomic_create(self, request):
+        """Create a workspace and its members as one all-or-nothing operation."""
+        name = request.data.get('name')
+        description = request.data.get('description')
+        is_active = request.data.get('is_active', True)
+        members = request.data.get('members', [])
+
+        if not isinstance(name, str) or len(name) < 3:
+            return Response(
+                {'name': ['Workspace name must be at least 3 characters long.']},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        if not isinstance(members, list):
+            return Response(
+                {'members': ['Members must be a list.']},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            with transaction.atomic():
+                workspace = Workspace.objects.create(
+                    name=name,
+                    description=description,
+                    is_active=is_active,
+                    owner=request.user,
+                )
+                WorkspaceMember.objects.create(
+                    workspace=workspace,
+                    user=request.user,
+                    role=WorkspaceMember.RoleChoices.ADMIN,
+                )
+                for member in members:
+                    WorkspaceMember.objects.create(
+                        workspace=workspace,
+                        user_id=member['user'],
+                        role=member.get('role', WorkspaceMember.RoleChoices.VIEWER),
+                    )
+        except (IntegrityError, KeyError, TypeError, ValueError):
+            return Response(
+                {
+                    'error': (
+                        'Workspace creation was rolled back because a member was '
+                        'invalid or duplicated.'
+                    )
+                },
+                status=status.HTTP_409_CONFLICT,
+            )
+
+        return Response(
+            WorkspaceSerializer(workspace).data,
+            status=status.HTTP_201_CREATED,
+        )
 
     @action(detail=True, methods=['get'])
     def stats(self, request, pk=None):

@@ -39,6 +39,7 @@
       "item": [
         { "name": "List Workspaces", "request": { "method": "GET", "url": "{{baseUrl}}/api/workspaces/" } },
         { "name": "Create Workspace", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"name\": \"Demo Workspace\",\n  \"description\": \"Workspace created during manual testing\",\n  \"is_active\": true\n}" }, "url": "{{baseUrl}}/api/workspaces/" } },
+        { "name": "Atomic Rollback Demo (Duplicate Member)", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"name\": \"Rollback Demo Workspace\",\n  \"description\": \"This entire transaction is rolled back.\",\n  \"members\": [\n    { \"user\": \"{{userId}}\", \"role\": \"EDITOR\" },\n    { \"user\": \"{{userId}}\", \"role\": \"VIEWER\" }\n  ]\n}" }, "url": "{{baseUrl}}/api/workspaces/atomic-create/" } },
         { "name": "Get Workspace", "request": { "method": "GET", "url": "{{baseUrl}}/api/workspaces/{{workspaceId}}/" } },
         { "name": "Update Workspace", "request": { "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"name\": \"Updated Demo Workspace\",\n  \"description\": \"Updated during manual testing\",\n  \"is_active\": true\n}" }, "url": "{{baseUrl}}/api/workspaces/{{workspaceId}}/" } },
         { "name": "Delete Workspace", "request": { "method": "DELETE", "url": "{{baseUrl}}/api/workspaces/{{workspaceId}}/" } },
