@@ -1,0 +1,95 @@
+{
+  "info": {
+    "name": "CollabDocs Backend API",
+    "description": "Manual test collection for the CollabDocs Django REST API. Set the collection variables before running requests. Authenticate with the superuser created by `python manage.py createsuperuser`.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "basic",
+    "basic": [
+      { "key": "username", "value": "{{username}}", "type": "string" },
+      { "key": "password", "value": "{{password}}", "type": "string" }
+    ]
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://127.0.0.1:8000" },
+    { "key": "username", "value": "" },
+    { "key": "password", "value": "" },
+    { "key": "userId", "value": "REPLACE_WITH_USER_UUID" },
+    { "key": "workspaceId", "value": "REPLACE_WITH_WORKSPACE_UUID" },
+    { "key": "workspaceMemberId", "value": "REPLACE_WITH_WORKSPACE_MEMBER_UUID" },
+    { "key": "documentId", "value": "REPLACE_WITH_DOCUMENT_UUID" },
+    { "key": "commentId", "value": "REPLACE_WITH_COMMENT_UUID" },
+    { "key": "tagId", "value": "REPLACE_WITH_TAG_UUID" },
+    { "key": "auditLogId", "value": "REPLACE_WITH_AUDIT_LOG_UUID" }
+  ],
+  "item": [
+    {
+      "name": "Users",
+      "item": [
+        { "name": "List Users", "request": { "method": "GET", "url": "{{baseUrl}}/api/users/" } },
+        { "name": "Create User", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"username\": \"demo_user\",\n  \"email\": \"demo.user@example.com\",\n  \"first_name\": \"Demo\",\n  \"last_name\": \"User\"\n}" }, "url": "{{baseUrl}}/api/users/" } },
+        { "name": "Get User", "request": { "method": "GET", "url": "{{baseUrl}}/api/users/{{userId}}/" } },
+        { "name": "Update User", "request": { "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"username\": \"demo_user_updated\",\n  \"email\": \"demo.user@example.com\",\n  \"first_name\": \"Demo\",\n  \"last_name\": \"Updated\"\n}" }, "url": "{{baseUrl}}/api/users/{{userId}}/" } },
+        { "name": "Delete User", "request": { "method": "DELETE", "url": "{{baseUrl}}/api/users/{{userId}}/" } }
+      ]
+    },
+    {
+      "name": "Workspaces",
+      "item": [
+        { "name": "List Workspaces", "request": { "method": "GET", "url": "{{baseUrl}}/api/workspaces/" } },
+        { "name": "Create Workspace", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"name\": \"Demo Workspace\",\n  \"description\": \"Workspace created during manual testing\",\n  \"is_active\": true\n}" }, "url": "{{baseUrl}}/api/workspaces/" } },
+        { "name": "Get Workspace", "request": { "method": "GET", "url": "{{baseUrl}}/api/workspaces/{{workspaceId}}/" } },
+        { "name": "Update Workspace", "request": { "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"name\": \"Updated Demo Workspace\",\n  \"description\": \"Updated during manual testing\",\n  \"is_active\": true\n}" }, "url": "{{baseUrl}}/api/workspaces/{{workspaceId}}/" } },
+        { "name": "Delete Workspace", "request": { "method": "DELETE", "url": "{{baseUrl}}/api/workspaces/{{workspaceId}}/" } },
+        { "name": "Workspace Stats", "request": { "method": "GET", "url": "{{baseUrl}}/api/workspaces/{{workspaceId}}/stats/" } },
+        { "name": "List Workspace Members", "request": { "method": "GET", "url": "{{baseUrl}}/api/workspace-members/" } },
+        { "name": "Create Workspace Member", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"workspace\": \"{{workspaceId}}\",\n  \"user\": \"{{userId}}\",\n  \"role\": \"EDITOR\"\n}" }, "url": "{{baseUrl}}/api/workspace-members/" } },
+        { "name": "Get Workspace Member", "request": { "method": "GET", "url": "{{baseUrl}}/api/workspace-members/{{workspaceMemberId}}/" } },
+        { "name": "Update Workspace Member", "request": { "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"workspace\": \"{{workspaceId}}\",\n  \"user\": \"{{userId}}\",\n  \"role\": \"VIEWER\"\n}" }, "url": "{{baseUrl}}/api/workspace-members/{{workspaceMemberId}}/" } },
+        { "name": "Delete Workspace Member", "request": { "method": "DELETE", "url": "{{baseUrl}}/api/workspace-members/{{workspaceMemberId}}/" } }
+      ]
+    },
+    {
+      "name": "Documents",
+      "item": [
+        { "name": "List Documents", "request": { "method": "GET", "url": "{{baseUrl}}/api/documents/" } },
+        { "name": "Search Documents", "request": { "method": "GET", "url": "{{baseUrl}}/api/documents/?search=Getting%20Started" } },
+        { "name": "Filter Documents by Status", "request": { "method": "GET", "url": "{{baseUrl}}/api/documents/?status=DRAFT" } },
+        { "name": "Create Document", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"title\": \"Getting Started\",\n  \"content\": \"Initial document content.\",\n  \"workspace\": \"{{workspaceId}}\",\n  \"status\": \"DRAFT\"\n}" }, "url": "{{baseUrl}}/api/documents/" } },
+        { "name": "Get Document", "request": { "method": "GET", "url": "{{baseUrl}}/api/documents/{{documentId}}/" } },
+        { "name": "Update Document", "request": { "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"title\": \"Getting Started - Updated\",\n  \"content\": \"Updated document content.\",\n  \"workspace\": \"{{workspaceId}}\",\n  \"status\": \"PUBLISHED\"\n}" }, "url": "{{baseUrl}}/api/documents/{{documentId}}/" } },
+        { "name": "Delete Document", "request": { "method": "DELETE", "url": "{{baseUrl}}/api/documents/{{documentId}}/" } },
+        { "name": "Document Versions", "request": { "method": "GET", "url": "{{baseUrl}}/api/documents/{{documentId}}/versions/" } },
+        { "name": "Document Tags", "request": { "method": "GET", "url": "{{baseUrl}}/api/documents/{{documentId}}/tags/" } }
+      ]
+    },
+    {
+      "name": "Comments",
+      "item": [
+        { "name": "List Comments", "request": { "method": "GET", "url": "{{baseUrl}}/api/comments/" } },
+        { "name": "Create Comment", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"document\": \"{{documentId}}\",\n  \"content\": \"This is a manual test comment.\",\n  \"parent\": null\n}" }, "url": "{{baseUrl}}/api/comments/" } },
+        { "name": "Get Comment", "request": { "method": "GET", "url": "{{baseUrl}}/api/comments/{{commentId}}/" } },
+        { "name": "Update Comment", "request": { "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"document\": \"{{documentId}}\",\n  \"content\": \"Updated manual test comment.\",\n  \"parent\": null\n}" }, "url": "{{baseUrl}}/api/comments/{{commentId}}/" } },
+        { "name": "Delete Comment", "request": { "method": "DELETE", "url": "{{baseUrl}}/api/comments/{{commentId}}/" } }
+      ]
+    },
+    {
+      "name": "Tags",
+      "item": [
+        { "name": "List Tags", "request": { "method": "GET", "url": "{{baseUrl}}/api/tags/" } },
+        { "name": "Create Tag", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"name\": \"manual-test\"\n}" }, "url": "{{baseUrl}}/api/tags/" } },
+        { "name": "Get Tag", "request": { "method": "GET", "url": "{{baseUrl}}/api/tags/{{tagId}}/" } },
+        { "name": "Update Tag", "request": { "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"name\": \"manual-test-updated\"\n}" }, "url": "{{baseUrl}}/api/tags/{{tagId}}/" } },
+        { "name": "Delete Tag", "request": { "method": "DELETE", "url": "{{baseUrl}}/api/tags/{{tagId}}/" } }
+      ]
+    },
+    {
+      "name": "Audit Logs",
+      "item": [
+        { "name": "List Audit Logs", "request": { "method": "GET", "url": "{{baseUrl}}/api/audit-logs/" } },
+        { "name": "Get Audit Log", "request": { "method": "GET", "url": "{{baseUrl}}/api/audit-logs/{{auditLogId}}/" } }
+      ]
+    }
+  ]
+}
